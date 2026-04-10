@@ -5,7 +5,6 @@ import { CalendarDays, Sun, Plus, Menu, X } from "lucide-react";
 import { useAppState, useAppDispatch, newId } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
 import type { ViewId } from "@/lib/types";
-import { nanoid } from "nanoid";
 
 export default function Sidebar() {
   const state = useAppState();
