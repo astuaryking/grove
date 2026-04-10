@@ -327,6 +327,7 @@ export default function ProjectDetail() {
                   key={event.id}
                   event={event}
                   today={today}
+                  projectId={project.id}
                   onToggleDone={() => toggleEventDone(event.id)}
                   onDelete={() => deleteEvent(event.id)}
                 />
