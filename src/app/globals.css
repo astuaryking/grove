@@ -1,0 +1,109 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Mapped to CSS vars for shadcn compatibility */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+
+  /* Project palette */
+  --color-lime: #a3e635;
+  --color-amber-bright: #fbbf24;
+  --color-orange-bright: #fb923c;
+  --color-teal-bright: #2dd4bf;
+  --color-purple-bright: #a78bfa;
+  --color-pink-bright: #f472b6;
+
+  /* Surface layers */
+  --color-surface: #111111;
+  --color-panel: #141414;
+  --color-raised: #1a1a1a;
+  --color-elevated: #1e1e1e;
+
+  /* Text */
+  --color-text-secondary: #888888;
+  --color-text-tertiary: #555555;
+
+  /* Borders */
+  --color-border-emphasized: #333333;
+}
+
+/* Dark-first — this is the only theme */
+:root {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --popover: #141414;
+  --popover-foreground: #fafafa;
+  --primary: #a3e635;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #111111;
+  --muted-foreground: #888888;
+  --accent: #1a1a1a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --border: #222222;
+  --input: #1a1a1a;
+  --ring: #a3e635;
+  --radius: 0.375rem;
+}
+
+/* Mirror for shadcn dark: variants */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #141414;
+  --card-foreground: #fafafa;
+  --popover: #141414;
+  --popover-foreground: #fafafa;
+  --primary: #a3e635;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #fafafa;
+  --muted: #111111;
+  --muted-foreground: #888888;
+  --accent: #1a1a1a;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --border: #222222;
+  --input: #1a1a1a;
+  --ring: #a3e635;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "tnum" 1;
+  }
+}
