@@ -287,6 +287,22 @@ function TodayEventRow({
           {event.title}
         </span>
 
+        {/* Assignee badges */}
+        {event.assignees?.length > 0 && (
+          <div className="flex items-center gap-0.5 flex-shrink-0">
+            {event.assignees.map((uid) => {
+              const u = users.find((x) => x.id === uid);
+              if (!u) return null;
+              return (
+                <span key={uid} className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                  style={{ color: u.color, backgroundColor: u.color + "22" }}>
+                  {u.name}
+                </span>
+              );
+            })}
+          </div>
+        )}
+
         {/* Overdue date */}
         {overdue && (
           <span className="text-[11px] font-mono text-destructive tabular-nums flex-shrink-0">

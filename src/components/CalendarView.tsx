@@ -46,6 +46,7 @@ export default function CalendarView() {
   const [addingEvent, setAddingEvent] = useState(false);
 
   const projects = state.data.projects;
+  const users    = state.data.users;
   const visibleProjectIds = new Set(
     projects.filter((p) => !hiddenProjectIds.has(p.id)).map((p) => p.id)
   );
@@ -223,6 +224,7 @@ export default function CalendarView() {
             selectedDate={selectedDate}
             projects={projects}
             visibleProjectIds={visibleProjectIds}
+            users={users}
             onSelectDate={(d) => { setSelectedDate(d); setAddingEvent(false); }}
             eventsByProject={eventsByProject}
             addingEvent={addingEvent}
@@ -239,6 +241,7 @@ export default function CalendarView() {
             selectedDate={selectedDate}
             projects={projects}
             visibleProjectIds={visibleProjectIds}
+            users={users}
             onSelectDate={setSelectedDate}
             onToggleDone={toggleEventDone}
             compact={viewMode === "week"}
@@ -257,6 +260,7 @@ function MonthView({
   selectedDate,
   projects,
   visibleProjectIds,
+  users,
   onSelectDate,
   eventsByProject,
   addingEvent,
@@ -269,6 +273,7 @@ function MonthView({
   selectedDate: string;
   projects: { id: string; color: string; events: import("@/lib/types").Event[] }[];
   visibleProjectIds: Set<string>;
+  users: import("@/lib/types").User[];
   onSelectDate: (d: string) => void;
   eventsByProject: { project: { id: string; name: string; icon: string; color: string }; events: import("@/lib/calendar").EventInstanceWithProject[] }[];
   addingEvent: boolean;
@@ -365,11 +370,22 @@ function MonthView({
                 <div className="flex flex-col">
                   {events.map(({ event }) => {
                     const done = isEventDoneOnDate(event, selectedDate);
+                    const assignedUsers = users.filter((u) => event.assignees?.includes(u.id));
                     return (
                       <div key={event.id} className="flex items-center gap-2 py-[5px] border-l-2 pl-3 hover:bg-raised transition-colors" style={{ borderColor: pc.hex }}>
                         <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: PRIORITY_COLORS[event.priority] }} />
                         <input type="checkbox" checked={done} onChange={() => onToggleDone(project.id, event.id, selectedDate)} className="w-3.5 h-3.5 flex-shrink-0 cursor-pointer accent-primary" />
                         <span className={`flex-1 text-[13px] ${done ? "line-through text-muted-foreground" : "text-foreground"}`}>{event.title}</span>
+                        {assignedUsers.length > 0 && (
+                          <div className="flex items-center gap-0.5 flex-shrink-0">
+                            {assignedUsers.map((u) => (
+                              <span key={u.id} className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+                                style={{ color: u.color, backgroundColor: u.color + "22" }}>
+                                {u.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                         {event.recurrence !== "none" && (
                           <span className="text-[10px] text-muted-foreground bg-surface px-1.5 py-0.5 rounded-sm font-mono flex-shrink-0">
                             {RECURRENCE_META[event.recurrence].label}
@@ -396,6 +412,7 @@ function ColumnView({
   selectedDate,
   projects,
   visibleProjectIds,
+  users,
   onSelectDate,
   onToggleDone,
   compact,
@@ -405,6 +422,7 @@ function ColumnView({
   selectedDate: string;
   projects: { id: string; name: string; icon: string; color: string; events: import("@/lib/types").Event[] }[];
   visibleProjectIds: Set<string>;
+  users: import("@/lib/types").User[];
   onSelectDate: (d: string) => void;
   onToggleDone: (projectId: string, eventId: string, dateStr: string) => void;
   compact: boolean; // true = week (tight), false = 3-day (spacious)
@@ -451,6 +469,7 @@ function ColumnView({
                 const project = projects.find((p) => p.id === projectId);
                 if (!project) return null;
                 const pc = getProjectColor(project.color);
+                const assignedUsers = users.filter((u) => event.assignees?.includes(u.id));
                 return (
                   <div
                     key={event.id}
@@ -466,6 +485,25 @@ function ColumnView({
                     >
                       {event.title}
                     </span>
+                    {/* Assignees: initials dot in week, full chip in 3-day */}
+                    {assignedUsers.length > 0 && (
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
+                        {assignedUsers.map((u) => (
+                          compact ? (
+                            <span key={u.id} title={u.name}
+                              className="w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-bold flex-shrink-0"
+                              style={{ backgroundColor: u.color + "33", color: u.color }}>
+                              {u.name[0]}
+                            </span>
+                          ) : (
+                            <span key={u.id} className="text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0"
+                              style={{ color: u.color, backgroundColor: u.color + "22" }}>
+                              {u.name}
+                            </span>
+                          )
+                        ))}
+                      </div>
+                    )}
                     {!compact && event.recurrence !== "none" && (
                       <span className="text-[9px] text-muted-foreground font-mono flex-shrink-0">
                         {RECURRENCE_META[event.recurrence].label}
