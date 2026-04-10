@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useActiveProject, useAppDispatch, newId } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
 import { todayStr } from "@/lib/calendar";
@@ -17,6 +17,7 @@ export default function ProjectDetail() {
   const [notesValue, setNotesValue] = useState("");
   const [addingSection, setAddingSection] = useState(false);
   const [addingEvent, setAddingEvent] = useState(false);
+  const [confirmDeleteProject, setConfirmDeleteProject] = useState(false);
 
   if (!project) {
     return (
@@ -34,6 +35,10 @@ export default function ProjectDetail() {
   function startEditNotes() {
     setNotesValue(project!.notes);
     setEditingNotes(true);
+  }
+
+  function deleteProject() {
+    dispatch({ type: "DELETE_PROJECT", projectId: project!.id });
   }
 
   function saveNotes() {
@@ -62,16 +67,47 @@ export default function ProjectDetail() {
     <div className="flex flex-col min-h-full">
       {/* Header */}
       <div
-        className="px-6 py-4 border-b border-border"
+        className="px-6 py-4 border-b border-border flex items-start justify-between gap-4"
         style={{ borderLeft: `3px solid ${pc.hex}` }}
       >
-        <h1 className="text-[22px] font-semibold text-foreground leading-tight">
-          {project.icon} {project.name}
-        </h1>
-        <p className="text-[12px] text-muted-foreground font-mono mt-0.5">
-          {project.sections.length} sections · {totalItems} items ·{" "}
-          {upcomingEvents} upcoming events
-        </p>
+        <div>
+          <h1 className="text-[22px] font-semibold text-foreground leading-tight">
+            {project.icon} {project.name}
+          </h1>
+          <p className="text-[12px] text-muted-foreground font-mono mt-0.5">
+            {project.sections.length} sections · {totalItems} items ·{" "}
+            {upcomingEvents} upcoming events
+          </p>
+        </div>
+
+        {/* Delete project */}
+        <div className="flex items-center gap-2 pt-1 flex-shrink-0">
+          {confirmDeleteProject ? (
+            <span className="flex items-center gap-2 text-[12px]">
+              <span className="text-muted-foreground">Delete project?</span>
+              <button
+                onClick={deleteProject}
+                className="text-destructive hover:opacity-80 font-medium"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setConfirmDeleteProject(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                No
+              </button>
+            </span>
+          ) : (
+            <button
+              onClick={() => setConfirmDeleteProject(true)}
+              className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded hover:bg-raised"
+              title="Delete project"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 px-6 py-5 flex flex-col gap-6">
