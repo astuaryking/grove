@@ -14,6 +14,30 @@ export type Priority = "high" | "medium" | "low";
 
 export type ViewId = "today" | "calendar" | "project";
 
+// --- Users ---
+
+export interface User {
+  id: string;
+  name: string;
+  color: string; // hex — used for avatar dot and task attribution
+}
+
+// --- Collaboration primitives ---
+
+/** Records a completed instance of an event, by whom and when. */
+export interface Completion {
+  date: string;        // ISO date — the occurrence date that was completed
+  userId: string;
+  completedAt: string; // ISO datetime
+}
+
+/** A user's stated plan for a specific event instance. */
+export interface Intent {
+  date: string;    // ISO date — the occurrence date
+  userId: string;
+  note: string;    // e.g., "after lunch", "2pm"
+}
+
 // --- Primitives ---
 
 export interface Item {
@@ -30,42 +54,45 @@ export interface Section {
   id: string;
   name: string;
   type: SectionType;
-  details: Record<string, string>; // flexible key-value metadata
+  details: Record<string, string>;
   items: Item[];
 }
 
 export interface Event {
   id: string;
   title: string;
-  date: string; // ISO date — start date for recurring events
+  date: string;
   recurrence: Recurrence;
   priority: Priority;
   projectId: string;
   sectionId?: string;
   notes: string;
-  completions: string[]; // ISO dates when marked done
+  assignees: string[];       // user IDs responsible for this event
+  completionLog: Completion[]; // who completed each occurrence and when
+  intents: Intent[];           // who plans to do it, with a note
 }
 
 export interface Project {
   id: string;
   name: string;
   icon: string;
-  color: string; // hex from project palette
+  color: string;
   notes: string;
   sections: Section[];
   events: Event[];
-  createdAt: string; // ISO date
+  createdAt: string;
 }
 
-// --- App state ---
+// --- App data ---
 
 export interface AppData {
   projects: Project[];
-  version: number; // for future schema migrations
+  users: User[];
+  currentUserId: string;
+  version: number;
 }
 
 // --- Section type field hints ---
-// Used by the UI to render appropriate detail fields per section type
 
 export const SECTION_TYPE_META: Record<
   SectionType,
@@ -91,12 +118,11 @@ export const SECTION_TYPE_META: Record<
 
 // --- Priority meta ---
 
-export const PRIORITY_META: Record<Priority, { label: string; order: number }> =
-  {
-    high: { label: "High", order: 0 },
-    medium: { label: "Medium", order: 1 },
-    low: { label: "Low", order: 2 },
-  };
+export const PRIORITY_META: Record<Priority, { label: string; order: number }> = {
+  high: { label: "High", order: 0 },
+  medium: { label: "Medium", order: 1 },
+  low: { label: "Low", order: 2 },
+};
 
 // --- Recurrence meta ---
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { useActiveProject, useAppDispatch, newId } from "@/lib/context";
+import { useActiveProject, useAppDispatch, useCurrentUser, newId } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
 import { todayStr } from "@/lib/calendar";
 import SectionCard from "@/components/SectionCard";
@@ -13,6 +13,7 @@ import AddEventForm from "@/components/AddEventForm";
 export default function ProjectDetail() {
   const project = useActiveProject();
   const dispatch = useAppDispatch();
+  const currentUser = useCurrentUser();
   const [editingNotes, setEditingNotes] = useState(false);
   const [notesValue, setNotesValue] = useState("");
   const [addingSection, setAddingSection] = useState(false);
@@ -60,6 +61,7 @@ export default function ProjectDetail() {
       projectId: project!.id,
       eventId,
       dateStr: today,
+      userId: currentUser?.id ?? "",
     });
   }
 

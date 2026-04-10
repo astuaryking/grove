@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAppDispatch, newId } from "@/lib/context";
+import { useAppDispatch, useAppState, newId } from "@/lib/context";
 import type { Recurrence, Priority } from "@/lib/types";
 import { RECURRENCE_META } from "@/lib/types";
 
@@ -24,11 +24,19 @@ interface Props {
 
 export default function AddEventForm({ projectId, defaultDate, sectionId, onDone }: Props) {
   const dispatch = useAppDispatch();
+  const state = useAppState();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(defaultDate);
   const [recurrence, setRecurrence] = useState<Recurrence>("none");
   const [priority, setPriority] = useState<Priority>("medium");
   const [notes, setNotes] = useState("");
+  const [assignees, setAssignees] = useState<string[]>([]);
+
+  function toggleAssignee(userId: string) {
+    setAssignees((prev) =>
+      prev.includes(userId) ? prev.filter((id) => id !== userId) : [...prev, userId]
+    );
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +54,9 @@ export default function AddEventForm({ projectId, defaultDate, sectionId, onDone
         projectId,
         sectionId,
         notes: notes.trim(),
-        completions: [],
+        assignees,
+        completionLog: [],
+        intents: [],
       },
     });
     onDone();
@@ -80,9 +90,7 @@ export default function AddEventForm({ projectId, defaultDate, sectionId, onDone
           className="text-[12px] bg-raised border border-border rounded px-2 py-1 text-foreground focus:outline-none cursor-pointer"
         >
           {RECURRENCES.map((r) => (
-            <option key={r.value} value={r.value}>
-              {r.label}
-            </option>
+            <option key={r.value} value={r.value}>{r.label}</option>
           ))}
         </select>
 
@@ -92,12 +100,36 @@ export default function AddEventForm({ projectId, defaultDate, sectionId, onDone
           className="text-[12px] bg-raised border border-border rounded px-2 py-1 text-foreground focus:outline-none cursor-pointer"
         >
           {PRIORITIES.map((p) => (
-            <option key={p.value} value={p.value}>
-              {p.label} priority
-            </option>
+            <option key={p.value} value={p.value}>{p.label} priority</option>
           ))}
         </select>
       </div>
+
+      {/* Assignees */}
+      {state.data.users.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-[11px] text-muted-foreground">Assign to:</span>
+          {state.data.users.map((user) => {
+            const assigned = assignees.includes(user.id);
+            return (
+              <button
+                key={user.id}
+                type="button"
+                onClick={() => toggleAssignee(user.id)}
+                className="flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full border transition-colors"
+                style={
+                  assigned
+                    ? { borderColor: user.color, color: user.color, backgroundColor: user.color + "22" }
+                    : { borderColor: "#333", color: "#888" }
+                }
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: assigned ? user.color : "#555" }} />
+                {user.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <input
         value={notes}
@@ -107,17 +139,10 @@ export default function AddEventForm({ projectId, defaultDate, sectionId, onDone
       />
 
       <div className="flex gap-2 pt-0.5">
-        <button
-          type="submit"
-          className="text-[12px] px-3 py-1 bg-primary text-primary-foreground rounded hover:opacity-90 font-medium"
-        >
+        <button type="submit" className="text-[12px] px-3 py-1 bg-primary text-primary-foreground rounded hover:opacity-90 font-medium">
           Add event
         </button>
-        <button
-          type="button"
-          onClick={onDone}
-          className="text-[12px] text-muted-foreground hover:text-foreground transition-colors"
-        >
+        <button type="button" onClick={onDone} className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">
           Cancel
         </button>
       </div>

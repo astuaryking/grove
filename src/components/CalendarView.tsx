@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { useAppState, useAppDispatch } from "@/lib/context";
+import { useAppState, useAppDispatch, useCurrentUser } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
 import {
   getMonthGrid,
@@ -32,6 +32,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 export default function CalendarView() {
   const state = useAppState();
   const dispatch = useAppDispatch();
+  const currentUser = useCurrentUser();
   const today = todayStr();
   const todayDate = parseDate(today);
 
@@ -89,7 +90,7 @@ export default function CalendarView() {
   }
 
   function toggleEventDone(projectId: string, eventId: string, dateStr: string) {
-    dispatch({ type: "TOGGLE_EVENT_DONE", projectId, eventId, dateStr });
+    dispatch({ type: "TOGGLE_EVENT_DONE", projectId, eventId, dateStr, userId: currentUser?.id ?? "" });
   }
 
   // --- Period label ---

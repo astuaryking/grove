@@ -3,58 +3,36 @@
 // ============================================================
 
 import type { AppData } from "./types";
-import { createDefaultProjects } from "./seed";
+import { createDefaultProjects, createDefaultUsers, DEFAULT_USER_ID } from "./seed";
 
 const STORAGE_KEY = "homestead-data";
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
-/**
- * Load app data from localStorage.
- * Returns default seed data if nothing is stored or if parsing fails.
- */
 export function loadAppData(): AppData {
-  if (typeof window === "undefined") {
-    return createDefaultData();
-  }
+  if (typeof window === "undefined") return createDefaultData();
 
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return createDefaultData();
-
-    const parsed: AppData = JSON.parse(raw);
-
-    // Run migrations if version is behind
-    const migrated = migrate(parsed);
-
-    return migrated;
+    const parsed = JSON.parse(raw);
+    return migrate(parsed);
   } catch (err) {
     console.error("Failed to load homestead data, using defaults:", err);
     return createDefaultData();
   }
 }
 
-/**
- * Save app data to localStorage.
- * Call this on every state change (debounced in the consuming component).
- */
 export function saveAppData(data: AppData): void {
   if (typeof window === "undefined") return;
-
   try {
-    const serialized = JSON.stringify({ ...data, version: CURRENT_VERSION });
-    localStorage.setItem(STORAGE_KEY, serialized);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...data, version: CURRENT_VERSION }));
   } catch (err) {
     console.error("Failed to save homestead data:", err);
   }
 }
 
-/**
- * Export app data as a downloadable JSON file.
- */
 export function exportAppData(data: AppData): void {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -63,10 +41,6 @@ export function exportAppData(data: AppData): void {
   URL.revokeObjectURL(url);
 }
 
-/**
- * Import app data from a JSON file.
- * Returns the parsed data or null if invalid.
- */
 export function importAppData(json: string): AppData | null {
   try {
     const parsed = JSON.parse(json);
@@ -77,9 +51,6 @@ export function importAppData(json: string): AppData | null {
   }
 }
 
-/**
- * Clear all stored data (returns to defaults on next load).
- */
 export function clearAppData(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(STORAGE_KEY);
@@ -88,25 +59,24 @@ export function clearAppData(): void {
 // --- Internal ---
 
 function createDefaultData(): AppData {
+  const users = createDefaultUsers();
   return {
     projects: createDefaultProjects(),
+    users,
+    currentUserId: users[0].id,
     version: CURRENT_VERSION,
   };
 }
 
-/**
- * Run sequential migrations from stored version to current.
- * Add new migration functions here as the schema evolves.
- */
-function migrate(data: AppData): AppData {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function migrate(data: any): AppData {
   let current = { ...data };
 
-  // Example: migration from v0/undefined to v1
+  // v0 → v1: ensure completions array exists
   if (!current.version || current.version < 1) {
-    // v1: ensure all events have completions array
-    current.projects = current.projects.map((p) => ({
+    current.projects = current.projects.map((p: any) => ({
       ...p,
-      events: (p.events || []).map((e) => ({
+      events: (p.events || []).map((e: any) => ({
         ...e,
         completions: e.completions ?? [],
       })),
@@ -115,7 +85,28 @@ function migrate(data: AppData): AppData {
     current.version = 1;
   }
 
-  // Future: if (current.version < 2) { ... current.version = 2; }
+  // v1 → v2: users, assignees, completionLog, intents
+  if (current.version < 2) {
+    const defaultUsers = createDefaultUsers();
+    current.users = current.users ?? defaultUsers;
+    current.currentUserId = current.currentUserId ?? defaultUsers[0].id;
 
-  return current;
+    current.projects = current.projects.map((p: any) => ({
+      ...p,
+      events: (p.events || []).map((e: any) => ({
+        ...e,
+        assignees: e.assignees ?? [],
+        // Convert old completions string[] → completionLog
+        completionLog: (e.completionLog ?? (e.completions ?? []).map((date: string) => ({
+          date,
+          userId: DEFAULT_USER_ID,
+          completedAt: date + "T12:00:00.000Z",
+        }))),
+        intents: e.intents ?? [],
+      })),
+    }));
+    current.version = 2;
+  }
+
+  return current as AppData;
 }

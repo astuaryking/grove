@@ -145,10 +145,31 @@ export function eventFiresOnDate(event: Event, dateStr: string): boolean {
 }
 
 /**
- * Check if an event instance is completed for a given date.
+ * Check if an event instance is completed for a given date (by any user).
  */
 export function isEventDoneOnDate(event: Event, dateStr: string): boolean {
-  return event.completions.includes(dateStr);
+  return (event.completionLog ?? []).some((c) => c.date === dateStr);
+}
+
+/**
+ * Check if an event instance is completed by a specific user on a given date.
+ */
+export function isEventDoneByUser(event: Event, dateStr: string, userId: string): boolean {
+  return (event.completionLog ?? []).some((c) => c.date === dateStr && c.userId === userId);
+}
+
+/**
+ * Get all completions for a specific date.
+ */
+export function getCompletionsForDate(event: Event, dateStr: string): import("./types").Completion[] {
+  return (event.completionLog ?? []).filter((c) => c.date === dateStr);
+}
+
+/**
+ * Get a user's intent for a specific date, if any.
+ */
+export function getIntentForUser(event: Event, dateStr: string, userId: string): import("./types").Intent | undefined {
+  return (event.intents ?? []).find((i) => i.date === dateStr && i.userId === userId);
 }
 
 // --- Event aggregation ---
@@ -274,6 +295,6 @@ export function getOverdueEvents(events: Event[], today: string): Event[] {
     (e) =>
       e.recurrence === "none" &&
       e.date < today &&
-      !e.completions.includes(e.date)
+      !(e.completionLog ?? []).some((c) => c.date === e.date)
   );
 }
