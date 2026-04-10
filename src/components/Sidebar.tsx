@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CalendarDays, Sun, ShoppingCart, Plus, Menu, X, Pencil } from "lucide-react";
+import { CalendarDays, Sun, ShoppingCart, Plus, Menu, X, Pencil, Check } from "lucide-react";
 import { useAppState, useAppDispatch, useCurrentUser, newId } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
 import type { ViewId } from "@/lib/types";
@@ -19,20 +19,16 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
   const [collapsed,      setCollapsed]      = useState(false);
   const [addingProject,  setAddingProject]  = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
-  const [editingId,      setEditingId]      = useState<string | null>(null);
-  const [editingName,    setEditingName]    = useState("");
+  const [editingName,    setEditingName]    = useState(false);
+  const [nameDraft,      setNameDraft]      = useState("");
   const [filterUserId,   setFilterUserId]   = useState<string | null>(null);
 
-  // People who appear in at least one project's members list
   const peopleWithProjects = state.data.users.filter((u) =>
     state.data.projects.some((p) => p.members.includes(u.id))
   );
 
-  // Filtered project list
   const visibleProjects = filterUserId
-    ? state.data.projects.filter(
-        (p) => p.members.length === 0 || p.members.includes(filterUserId)
-      )
+    ? state.data.projects.filter((p) => p.members.length === 0 || p.members.includes(filterUserId))
     : state.data.projects;
 
   function navigate(view: ViewId, projectId?: string) {
@@ -54,13 +50,10 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
     setNewProjectName(""); setAddingProject(false);
   }
 
-  function commitEdit(type: "profile", userId?: string) {
-    const name = editingName.trim();
-    if (name) {
-      if (type === "profile") dispatch({ type: "SET_MY_PROFILE", updates: { name } });
-      else if (userId) dispatch({ type: "UPDATE_PERSON", userId, updates: { name } });
-    }
-    setEditingId(null);
+  function commitName() {
+    const name = nameDraft.trim();
+    if (name) dispatch({ type: "SET_MY_PROFILE", updates: { name } });
+    setEditingName(false);
   }
 
   const isActive = (view: ViewId, projectId?: string) => {
@@ -72,10 +65,40 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
   function Content({ onClose }: { onClose: () => void }) {
     return (
       <>
-        {/* Header */}
-        <div className="flex items-center justify-between px-3 py-3 border-b border-border flex-shrink-0">
-          <span className="text-[13px] font-semibold text-foreground tracking-tight select-none">🌿 Grove</span>
-          <button onClick={onClose} className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-raised transition-colors">
+        {/* Header — logo + your identity */}
+        <div className="flex items-center gap-2 px-3 py-3 border-b border-border flex-shrink-0">
+          <span className="text-[13px] font-semibold text-foreground tracking-tight select-none flex-1">🌿 Grove</span>
+
+          {/* Your name — click to rename */}
+          {me && (
+            editingName ? (
+              <form onSubmit={(e) => { e.preventDefault(); commitName(); }} className="flex items-center gap-1">
+                <input
+                  autoFocus
+                  value={nameDraft}
+                  onChange={(e) => setNameDraft(e.target.value)}
+                  onBlur={commitName}
+                  onKeyDown={(e) => { if (e.key === "Escape") setEditingName(false); }}
+                  className="text-[12px] bg-panel border border-border-emphasized rounded px-1.5 py-0.5 text-foreground focus:outline-none focus:border-ring w-20"
+                />
+                <button type="submit" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <Check size={11} />
+                </button>
+              </form>
+            ) : (
+              <button
+                onClick={() => { setNameDraft(me.name); setEditingName(true); }}
+                className="group flex items-center gap-1.5 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                title="Click to rename"
+              >
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: me.color }} />
+                <span>{me.name}</span>
+                <Pencil size={9} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </button>
+            )
+          )}
+
+          <button onClick={onClose} className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-raised transition-colors ml-1">
             <X size={12} />
           </button>
         </div>
@@ -89,53 +112,15 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
 
         <div className="mx-3 my-1 border-t border-border flex-shrink-0" />
 
-        {/* You */}
-        <div className="px-3 pt-1 pb-0.5 flex-shrink-0">
-          <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">You</span>
-        </div>
-        <div className="px-2 pb-1 flex-shrink-0">
-          {me && (
-            <div className="group flex items-center gap-2 px-2 py-[5px] rounded hover:bg-raised transition-colors">
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: me.color }} />
-              {editingId === "profile" ? (
-                <form onSubmit={(e) => { e.preventDefault(); commitEdit("profile"); }} className="flex-1">
-                  <input autoFocus value={editingName} onChange={(e) => setEditingName(e.target.value)}
-                    onBlur={() => commitEdit("profile")}
-                    onKeyDown={(e) => { if (e.key === "Escape") setEditingId(null); }}
-                    className="w-full text-[13px] bg-panel border border-border-emphasized rounded px-1.5 py-0.5 text-foreground focus:outline-none focus:border-ring"
-                  />
-                </form>
-              ) : (
-                <span className="flex-1 text-[13px] text-foreground font-medium truncate">{me.name}</span>
-              )}
-              {editingId !== "profile" && (
-                <button
-                  onClick={() => { setEditingId("profile"); setEditingName(me.name); }}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 text-muted-foreground hover:text-foreground transition-opacity"
-                >
-                  <Pencil size={11} />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="mx-3 my-1 border-t border-border flex-shrink-0" />
-
         {/* Projects */}
         <div className="px-3 pt-1 pb-0.5 flex-shrink-0">
           <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">Projects</span>
         </div>
 
-        {/* Person filter chips — only shown when at least one project has members */}
+        {/* Person filter chips */}
         {peopleWithProjects.length > 0 && (
           <div className="px-2 pb-1.5 flex flex-wrap gap-1 flex-shrink-0">
-            <FilterChip
-              label="All"
-              active={filterUserId === null}
-              color="#888"
-              onClick={() => setFilterUserId(null)}
-            />
+            <FilterChip label="All" active={filterUserId === null} color="#888" onClick={() => setFilterUserId(null)} />
             {peopleWithProjects.map((u) => (
               <FilterChip
                 key={u.id}
