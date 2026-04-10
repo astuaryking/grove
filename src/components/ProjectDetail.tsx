@@ -9,6 +9,9 @@ import SectionCard from "@/components/SectionCard";
 import EventRow from "@/components/EventRow";
 import AddSectionForm from "@/components/AddSectionForm";
 import AddEventForm from "@/components/AddEventForm";
+import ProjectChat from "@/components/ProjectChat";
+
+type Tab = "overview" | "chat";
 
 const PERSON_COLORS = ["#60a5fa", "#fb923c", "#a78bfa", "#2dd4bf", "#f59e0b", "#f472b6"];
 
@@ -18,6 +21,7 @@ export default function ProjectDetail() {
   const state       = useAppState();
   const currentUser = useCurrentUser();
 
+  const [activeTab,             setActiveTab]             = useState<Tab>("overview");
   const [editingNotes,          setEditingNotes]          = useState(false);
   const [notesValue,            setNotesValue]            = useState("");
   const [addingSection,         setAddingSection]         = useState(false);
@@ -105,10 +109,10 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="flex flex-col min-h-full">
+    <div className="flex flex-col h-full min-h-0">
       {/* Header */}
       <div
-        className="px-6 py-4 border-b border-border flex items-start justify-between gap-4"
+        className="px-6 py-4 border-b border-border flex items-start justify-between gap-4 flex-shrink-0"
         style={{ borderLeft: `3px solid ${pc.hex}` }}
       >
         <div>
@@ -151,7 +155,32 @@ export default function ProjectDetail() {
         </div>
       </div>
 
-      <div className="flex-1 px-6 py-5 flex flex-col gap-6">
+      {/* Tabs */}
+      <div className="flex border-b border-border px-6 flex-shrink-0">
+        {(["overview", "chat"] as Tab[]).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`text-[12px] py-2 mr-5 border-b-2 transition-colors capitalize ${
+              activeTab === tab
+                ? "border-primary text-foreground font-medium"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tab === "chat" ? "Chat" : "Overview"}
+          </button>
+        ))}
+      </div>
+
+      {/* Chat tab */}
+      {activeTab === "chat" && (
+        <div className="flex-1 min-h-0">
+          <ProjectChat project={project} users={state.data.users} />
+        </div>
+      )}
+
+      {/* Overview tab */}
+      {activeTab === "overview" && <div className="flex-1 px-6 py-5 flex flex-col gap-6 overflow-y-auto">
         {/* Notes */}
         <section>
           <div className="flex items-center justify-between mb-2">
@@ -350,7 +379,7 @@ export default function ProjectDetail() {
             )}
           </div>
         </section>
-      </div>
+      </div>}
     </div>
   );
 }

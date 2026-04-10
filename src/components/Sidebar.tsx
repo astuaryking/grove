@@ -44,7 +44,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
       type: "ADD_PROJECT",
       project: {
         id: newId("proj"), name, icon: "📁", color: "lime", notes: "",
-        members: [], sections: [], events: [], createdAt: new Date().toISOString(),
+        members: [], sections: [], events: [], messages: [], createdAt: new Date().toISOString(),
       },
     });
     setNewProjectName(""); setAddingProject(false);

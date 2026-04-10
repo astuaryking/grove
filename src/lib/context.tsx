@@ -64,7 +64,10 @@ export type AppAction =
   | { type: "ADD_SHOPPING_ITEM"; item: ShoppingItem }
   | { type: "UPDATE_SHOPPING_ITEM"; itemId: string; updates: Partial<ShoppingItem> }
   | { type: "DELETE_SHOPPING_ITEM"; itemId: string }
-  | { type: "TOGGLE_PURCHASED"; itemId: string; userId: string };
+  | { type: "TOGGLE_PURCHASED"; itemId: string; userId: string }
+
+  // Chat
+  | { type: "SAVE_CHAT"; projectId: string; messages: import("./types").ChatMessage[] };
 
 // --- Reducer ---
 
@@ -222,6 +225,11 @@ function appReducer(state: AppState, action: AppAction): AppState {
         },
       };
     }
+
+    case "SAVE_CHAT":
+      return updateProject(state, action.projectId, () => ({
+        messages: action.messages.slice(-50),
+      }));
 
     default:
       return state;

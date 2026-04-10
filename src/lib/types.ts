@@ -65,6 +65,14 @@ export interface Event {
   intents: Intent[];
 }
 
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  imageUrls?: string[];
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -74,6 +82,7 @@ export interface Project {
   members: string[];  // user IDs; empty = visible to everyone
   sections: Section[];
   events: Event[];
+  messages: ChatMessage[];
   createdAt: string;
 }
 
