@@ -71,6 +71,7 @@ export interface Project {
   icon: string;
   color: string;
   notes: string;
+  members: string[];  // user IDs; empty = visible to everyone
   sections: Section[];
   events: Event[];
   createdAt: string;

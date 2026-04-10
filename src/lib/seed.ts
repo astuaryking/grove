@@ -25,11 +25,11 @@ const BLANK = {
 export function createDefaultProjects(): Project[] {
   const now = new Date().toISOString();
   return [
-    { id: "proj_fruit-trees",      name: "Fruit trees",      icon: "🍎", color: "lime",   notes: "", sections: [], events: [], createdAt: now },
-    { id: "proj_bee-hives",        name: "Bee hives",        icon: "🐝", color: "amber",  notes: "", sections: [], events: [], createdAt: now },
-    { id: "proj_chickens",         name: "Chickens",         icon: "🐔", color: "orange", notes: "", sections: [], events: [], createdAt: now },
-    { id: "proj_cannabis",         name: "Cannabis",         icon: "🌿", color: "teal",   notes: "", sections: [], events: [], createdAt: now },
-    { id: "proj_vegetable-garden", name: "Vegetable garden", icon: "🥬", color: "purple", notes: "", sections: [], events: [], createdAt: now },
-    { id: "proj_cut-flowers",      name: "Cut flowers",      icon: "💐", color: "pink",   notes: "", sections: [], events: [], createdAt: now },
+    { id: "proj_fruit-trees",      name: "Fruit trees",      icon: "🍎", color: "lime",   notes: "", members: [], sections: [], events: [], createdAt: now },
+    { id: "proj_bee-hives",        name: "Bee hives",        icon: "🐝", color: "amber",  notes: "", members: [], sections: [], events: [], createdAt: now },
+    { id: "proj_chickens",         name: "Chickens",         icon: "🐔", color: "orange", notes: "", members: [], sections: [], events: [], createdAt: now },
+    { id: "proj_cannabis",         name: "Cannabis",         icon: "🌿", color: "teal",   notes: "", members: [], sections: [], events: [], createdAt: now },
+    { id: "proj_vegetable-garden", name: "Vegetable garden", icon: "🥬", color: "purple", notes: "", members: [], sections: [], events: [], createdAt: now },
+    { id: "proj_cut-flowers",      name: "Cut flowers",      icon: "💐", color: "pink",   notes: "", members: [], sections: [], events: [], createdAt: now },
   ];
 }

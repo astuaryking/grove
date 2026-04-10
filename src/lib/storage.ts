@@ -6,7 +6,7 @@ import type { AppData, User } from "./types";
 import { createDefaultProjects, createDefaultUsers, DEFAULT_USER_ID, DEFAULT_WIFE_ID } from "./seed";
 
 const STORAGE_KEY = "homestead-data";
-const CURRENT_VERSION = 4;
+const CURRENT_VERSION = 5;
 
 export function loadAppData(): AppData {
   if (typeof window === "undefined") return createDefaultData();
@@ -108,6 +108,12 @@ function migrate(data: any): AppData {
       }
     }
     d.version = 4;
+  }
+
+  if (d.version < 5) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    d.projects = d.projects.map((p: any) => ({ ...p, members: p.members ?? [] }));
+    d.version = 5;
   }
 
   return d as AppData;
