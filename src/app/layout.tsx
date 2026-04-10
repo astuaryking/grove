@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Homestead",
-  description: "Personal homestead operations dashboard — Duxbury, MA",
+  title: "Grove",
+  description: "Homestead operations for the family — Duxbury, MA",
 };
 
 export default function RootLayout({

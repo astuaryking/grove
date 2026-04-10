@@ -1,51 +1,44 @@
 // ============================================================
-// Homestead Manager — Core Types
+// Grove — Core Types
 // ============================================================
 
-// --- Enums & unions ---
-
 export type SectionType = "plant" | "animal" | "initiative" | "equipment";
-
 export type ItemStatus = "active" | "planned" | "completed" | "archived";
-
 export type Recurrence = "none" | "daily" | "weekly" | "biweekly" | "monthly" | "seasonal";
-
 export type Priority = "high" | "medium" | "low";
+export type ViewId = "today" | "calendar" | "project" | "shopping";
 
-export type ViewId = "today" | "calendar" | "project";
+// --- People ---
 
-// --- Users ---
-
+/** A person in the household. currentUserId identifies which one "I" am on this device. */
 export interface User {
   id: string;
   name: string;
-  color: string; // hex — used for avatar dot and task attribution
+  color: string; // hex
 }
 
-// --- Collaboration primitives ---
+// --- Collaboration ---
 
-/** Records a completed instance of an event, by whom and when. */
 export interface Completion {
-  date: string;        // ISO date — the occurrence date that was completed
+  date: string;        // ISO date — the occurrence completed
   userId: string;
   completedAt: string; // ISO datetime
 }
 
-/** A user's stated plan for a specific event instance. */
 export interface Intent {
-  date: string;    // ISO date — the occurrence date
+  date: string;
   userId: string;
-  note: string;    // e.g., "after lunch", "2pm"
+  note: string;
 }
 
-// --- Primitives ---
+// --- Project primitives ---
 
 export interface Item {
   id: string;
   name: string;
   variety: string;
   qty: number;
-  date: string; // ISO date — planted, acquired, or started
+  date: string;
   notes: string;
   status: ItemStatus;
 }
@@ -67,9 +60,9 @@ export interface Event {
   projectId: string;
   sectionId?: string;
   notes: string;
-  assignees: string[];       // user IDs responsible for this event
-  completionLog: Completion[]; // who completed each occurrence and when
-  intents: Intent[];           // who plans to do it, with a note
+  assignees: string[];
+  completionLog: Completion[];
+  intents: Intent[];
 }
 
 export interface Project {
@@ -83,54 +76,53 @@ export interface Project {
   createdAt: string;
 }
 
+// --- Shopping list ---
+
+export interface ShoppingItem {
+  id: string;
+  name: string;
+  qty: number;
+  unit: string;       // "bags", "lbs", "each", "pack", …
+  store: string;      // "Agway", "Amazon", "Home Depot", …
+  projectId?: string; // optional project link
+  assignees: string[];
+  notes: string;
+  purchased: boolean;
+  purchasedAt?: string;  // ISO datetime
+  purchasedBy?: string;  // userId
+  createdAt: string;
+}
+
 // --- App data ---
 
 export interface AppData {
   projects: Project[];
   users: User[];
-  currentUserId: string;
+  currentUserId: string; // which user "I" am on this device
+  shoppingList: ShoppingItem[];
   version: number;
 }
 
-// --- Section type field hints ---
+// --- Metadata ---
 
-export const SECTION_TYPE_META: Record<
-  SectionType,
-  { label: string; detailFields: string[] }
-> = {
-  plant: {
-    label: "Plants / crops",
-    detailFields: ["spacing", "sun", "days_to_maturity", "water_needs"],
-  },
-  animal: {
-    label: "Animals / livestock",
-    detailFields: ["breed", "count", "age", "housing"],
-  },
-  initiative: {
-    label: "Initiative / project",
-    detailFields: ["status", "goal", "budget", "timeline"],
-  },
-  equipment: {
-    label: "Equipment / infrastructure",
-    detailFields: ["model", "purchase_date", "maintenance_schedule"],
-  },
+export const SECTION_TYPE_META: Record<SectionType, { label: string; detailFields: string[] }> = {
+  plant:     { label: "Plants / crops",            detailFields: ["spacing", "sun", "days_to_maturity", "water_needs"] },
+  animal:    { label: "Animals / livestock",       detailFields: ["breed", "count", "age", "housing"] },
+  initiative:{ label: "Initiative / project",      detailFields: ["status", "goal", "budget", "timeline"] },
+  equipment: { label: "Equipment / infrastructure",detailFields: ["model", "purchase_date", "maintenance_schedule"] },
 };
-
-// --- Priority meta ---
 
 export const PRIORITY_META: Record<Priority, { label: string; order: number }> = {
-  high: { label: "High", order: 0 },
+  high:   { label: "High",   order: 0 },
   medium: { label: "Medium", order: 1 },
-  low: { label: "Low", order: 2 },
+  low:    { label: "Low",    order: 2 },
 };
 
-// --- Recurrence meta ---
-
 export const RECURRENCE_META: Record<Recurrence, { label: string }> = {
-  none: { label: "One-time" },
-  daily: { label: "Daily" },
-  weekly: { label: "Weekly" },
+  none:     { label: "One-time" },
+  daily:    { label: "Daily" },
+  weekly:   { label: "Weekly" },
   biweekly: { label: "Biweekly" },
-  monthly: { label: "Monthly" },
+  monthly:  { label: "Monthly" },
   seasonal: { label: "Seasonal" },
 };

@@ -71,17 +71,6 @@ export default function TodayView() {
       <div className="px-6 py-4 border-b border-border flex items-start justify-between gap-4">
         <div>
           <h1 className="text-[22px] font-semibold text-foreground">{formatDateLong(today)}</h1>
-          {currentUser && (
-            <p className="text-[12px] text-muted-foreground mt-0.5">
-              Viewing as{" "}
-              <span className="font-medium" style={{ color: currentUser.color }}>
-                {currentUser.name}
-              </span>
-              {users.length > 1 && (
-                <span className="text-muted-foreground"> — switch in sidebar</span>
-              )}
-            </p>
-          )}
         </div>
       </div>
 
