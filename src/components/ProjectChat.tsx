@@ -119,7 +119,9 @@ export default function ProjectChat({ project, users }: ProjectChatProps) {
 
   // Sync messages when project changes (e.g. switching projects)
   useEffect(() => {
-    setMessages(project.messages ?? []);
+    setMessages(
+      (project.messages ?? []).filter((m) => m.content.trim() !== "" || (m.imageUrls?.length ?? 0) > 0)
+    );
     setPendingImageUrl(null);
     setPendingImageName(null);
     setUploadError(null);
