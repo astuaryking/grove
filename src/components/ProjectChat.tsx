@@ -74,19 +74,21 @@ interface ApiMessage {
 }
 
 function toApiMessages(messages: ChatMessage[]): ApiMessage[] {
-  return messages.map((m) => {
-    if (!m.imageUrls?.length) {
-      return { role: m.role, content: m.content };
-    }
-    const parts: ApiMessageContent = [
-      { type: "text" as const, text: m.content },
-      ...m.imageUrls.map((url) => ({
-        type: "image" as const,
-        image: new URL(url),
-      })),
-    ];
-    return { role: m.role, content: parts };
-  });
+  return messages
+    .filter((m) => m.content.trim() !== "" || (m.imageUrls?.length ?? 0) > 0)
+    .map((m) => {
+      if (!m.imageUrls?.length) {
+        return { role: m.role, content: m.content };
+      }
+      const parts: ApiMessageContent = [
+        { type: "text" as const, text: m.content },
+        ...m.imageUrls.map((url) => ({
+          type: "image" as const,
+          image: new URL(url),
+        })),
+      ];
+      return { role: m.role, content: parts };
+    });
 }
 
 // --- Component ---
@@ -101,7 +103,7 @@ export default function ProjectChat({ project, users }: ProjectChatProps) {
   const currentUser = useCurrentUser();
 
   const [messages, setMessages] = useState<ChatMessage[]>(
-    project.messages ?? []
+    (project.messages ?? []).filter((m) => m.content.trim() !== "" || (m.imageUrls?.length ?? 0) > 0)
   );
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -133,7 +135,8 @@ export default function ProjectChat({ project, users }: ProjectChatProps) {
 
   const saveMessages = useCallback(
     (msgs: ChatMessage[]) => {
-      dispatch({ type: "SAVE_CHAT", projectId: project.id, messages: msgs });
+      const clean = msgs.filter((m) => m.content.trim() !== "" || (m.imageUrls?.length ?? 0) > 0);
+      dispatch({ type: "SAVE_CHAT", projectId: project.id, messages: clean });
     },
     [dispatch, project.id]
   );
@@ -246,6 +249,18 @@ export default function ProjectChat({ project, users }: ProjectChatProps) {
             m.id === assistantId ? { ...m, content: snap } : m
           )
         );
+      }
+
+      if (!accumulated) {
+        // Stream returned empty — likely an upstream API error; show message, don't persist
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? { ...m, content: "No response received. Please try again." }
+              : m
+          )
+        );
+        return;
       }
 
       const finalMessages: ChatMessage[] = [
