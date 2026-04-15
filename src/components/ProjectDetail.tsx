@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Upload } from "lucide-react";
 import { useActiveProject, useAppDispatch, useAppState, useCurrentUser, newId } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
 import { todayStr } from "@/lib/calendar";
@@ -10,6 +10,7 @@ import EventRow from "@/components/EventRow";
 import AddSectionForm from "@/components/AddSectionForm";
 import AddEventForm from "@/components/AddEventForm";
 import ProjectChat from "@/components/ProjectChat";
+import ImportPanel from "@/components/ImportPanel";
 
 type Tab = "overview" | "chat";
 
@@ -29,6 +30,7 @@ export default function ProjectDetail() {
   const [confirmDeleteProject,  setConfirmDeleteProject]  = useState(false);
   const [addingMember,          setAddingMember]          = useState(false);
   const [newMemberName,         setNewMemberName]         = useState("");
+  const [importing,             setImporting]             = useState(false);
 
   if (!project) {
     return (
@@ -125,8 +127,18 @@ export default function ProjectDetail() {
           </p>
         </div>
 
-        {/* Delete project */}
+        {/* Header actions */}
         <div className="flex items-center gap-2 pt-1 flex-shrink-0">
+          {/* Import button */}
+          <button
+            onClick={() => { setImporting((v) => !v); setActiveTab("overview"); }}
+            className={`p-1.5 transition-colors rounded hover:bg-raised ${importing ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+            title="Import YAML / Markdown"
+          >
+            <Upload size={14} />
+          </button>
+
+          {/* Delete project */}
           {confirmDeleteProject ? (
             <span className="flex items-center gap-2 text-[12px]">
               <span className="text-muted-foreground">Delete project?</span>
@@ -181,6 +193,11 @@ export default function ProjectDetail() {
 
       {/* Overview tab */}
       {activeTab === "overview" && <div className="flex-1 px-6 py-5 flex flex-col gap-6 overflow-y-auto">
+        {/* Import panel */}
+        {importing && (
+          <ImportPanel projectId={project.id} onDone={() => setImporting(false)} />
+        )}
+
         {/* Notes */}
         <section>
           <div className="flex items-center gap-3 mb-2">

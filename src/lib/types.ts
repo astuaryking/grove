@@ -65,11 +65,17 @@ export interface Event {
   intents: Intent[];
 }
 
+export interface ToolResult {
+  toolName: string;
+  result: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   imageUrls?: string[];
+  toolResults?: ToolResult[];
   createdAt: string;
 }
 
