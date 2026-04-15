@@ -183,14 +183,13 @@ export default function ProjectDetail() {
       {activeTab === "overview" && <div className="flex-1 px-6 py-5 flex flex-col gap-6 overflow-y-auto">
         {/* Notes */}
         <section>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
-              Notes
-            </span>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase whitespace-nowrap">Notes</span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--border-emphasized), transparent)" }} />
             {!editingNotes && (
               <button
                 onClick={startEditNotes}
-                className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
               >
                 Edit
               </button>
@@ -238,10 +237,11 @@ export default function ProjectDetail() {
 
         {/* People */}
         <section>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">People</span>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase whitespace-nowrap">People</span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--border-emphasized), transparent)" }} />
             {!addingMember && (
-              <button onClick={() => setAddingMember(true)} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+              <button onClick={() => setAddingMember(true)} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex-shrink-0">
                 Add
               </button>
             )}
@@ -273,9 +273,9 @@ export default function ProjectDetail() {
                   onClick={() => addMember(u.id)}
                   title={`Add ${u.name}`}
                   className="text-[11px] px-1.5 py-0.5 rounded-sm border border-dashed transition-colors hover:border-solid"
-                  style={{ color: "#555", borderColor: "#333" }}
+                  style={{ color: "var(--text-tertiary)", borderColor: "var(--border-emphasized)" }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = u.color; (e.currentTarget as HTMLElement).style.borderColor = u.color + "88"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#555"; (e.currentTarget as HTMLElement).style.borderColor = "#333"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-tertiary)"; (e.currentTarget as HTMLElement).style.borderColor = "var(--border-emphasized)"; }}
                 >
                   + {u.name}
                 </button>
@@ -300,10 +300,9 @@ export default function ProjectDetail() {
 
         {/* Sections */}
         <section>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
-              Sections
-            </span>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase whitespace-nowrap">Sections</span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--border-emphasized), transparent)" }} />
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -335,10 +334,9 @@ export default function ProjectDetail() {
 
         {/* Events */}
         <section>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase">
-              Events
-            </span>
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-[11px] font-semibold tracking-widest text-muted-foreground uppercase whitespace-nowrap">Events</span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, var(--border-emphasized), transparent)" }} />
           </div>
 
           <div className="flex flex-col">

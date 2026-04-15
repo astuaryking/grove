@@ -135,10 +135,10 @@ export default function EventRow({ event, today, projectId, onToggleDone, onDele
                   style={
                     assigned
                       ? { borderColor: user.color, color: user.color, backgroundColor: user.color + "22" }
-                      : { borderColor: "#333", color: "#888" }
+                      : { borderColor: "var(--border-emphasized)", color: "var(--muted-foreground)" }
                   }
                 >
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: assigned ? user.color : "#555" }} />
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: assigned ? user.color : "var(--text-tertiary)" }} />
                   {user.name}
                 </button>
               );

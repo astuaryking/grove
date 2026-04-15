@@ -438,7 +438,7 @@ function MessageBubble({ msg, isStreaming }: { msg: ChatMessage; isStreaming: bo
   const isUser = msg.role === "user";
 
   return (
-    <div className={`flex flex-col gap-1 ${isUser ? "items-end" : "items-start"}`}>
+    <div className={`group flex flex-col gap-0.5 ${isUser ? "items-end" : "items-start"}`}>
       {/* Images */}
       {msg.imageUrls?.map((url) => (
         // eslint-disable-next-line @next/next/no-img-element
@@ -450,14 +450,23 @@ function MessageBubble({ msg, isStreaming }: { msg: ChatMessage; isStreaming: bo
         />
       ))}
 
-      {/* Text */}
+      {/* Text bubble */}
       {(msg.content || isStreaming) && (
         <div
-          className={`max-w-[85%] px-3 py-2 rounded text-[13px] leading-relaxed ${
+          className="max-w-[85%] px-3 py-2 rounded text-[13px] leading-relaxed"
+          style={
             isUser
-              ? "bg-[#1a2a0a] text-[#c8f57a] border border-[#2a3f10]"
-              : "bg-panel border border-border text-foreground"
-          }`}
+              ? {
+                  backgroundColor: "var(--chat-user-bg)",
+                  color: "var(--chat-user-text)",
+                  border: "1px solid var(--chat-user-border)",
+                }
+              : {
+                  backgroundColor: "var(--chat-assistant-bg)",
+                  color: "var(--foreground)",
+                  border: "1px solid var(--chat-assistant-border)",
+                }
+          }
         >
           {msg.content ? (
             <FormattedContent content={msg.content} />
@@ -467,8 +476,8 @@ function MessageBubble({ msg, isStreaming }: { msg: ChatMessage; isStreaming: bo
         </div>
       )}
 
-      {/* Timestamp */}
-      <span className="text-[10px] text-muted-foreground/50 font-mono">
+      {/* Timestamp — visible only on hover */}
+      <span className="text-[10px] text-muted-foreground/40 font-mono opacity-0 group-hover:opacity-100 transition-opacity duration-150">
         {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
       </span>
     </div>

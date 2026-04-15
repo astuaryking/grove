@@ -5,77 +5,56 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Mapped to CSS vars for shadcn compatibility */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
+  --color-background:         var(--background);
+  --color-foreground:         var(--foreground);
+  --color-card:               var(--card);
+  --color-card-foreground:    var(--card-foreground);
+  --color-popover:            var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
+  --color-primary:            var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
+  --color-secondary:          var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
+  --color-muted:              var(--muted);
+  --color-muted-foreground:   var(--muted-foreground);
+  --color-accent:             var(--accent);
+  --color-accent-foreground:  var(--accent-foreground);
+  --color-destructive:        var(--destructive);
+  --color-border:             var(--border);
+  --color-input:              var(--input);
+  --color-ring:               var(--ring);
+  --font-sans:                var(--font-geist-sans);
+  --font-mono:                var(--font-geist-mono);
+  --radius-sm:                calc(var(--radius) * 0.6);
+  --radius-md:                calc(var(--radius) * 0.8);
+  --radius-lg:                var(--radius);
 
-  /* Project palette */
-  --color-lime: #a3e635;
-  --color-amber-bright: #fbbf24;
+  /* Project palette — fixed accent hues */
+  --color-lime:          #a3e635;
+  --color-amber-bright:  #fbbf24;
   --color-orange-bright: #fb923c;
-  --color-teal-bright: #2dd4bf;
+  --color-teal-bright:   #2dd4bf;
   --color-purple-bright: #a78bfa;
-  --color-pink-bright: #f472b6;
+  --color-pink-bright:   #f472b6;
 
-  /* Surface layers */
-  --color-surface: #111111;
-  --color-panel: #141414;
-  --color-raised: #1a1a1a;
-  --color-elevated: #1e1e1e;
+  /* Surface layers — theme-aware */
+  --color-surface:  var(--surface);
+  --color-panel:    var(--panel);
+  --color-raised:   var(--raised);
+  --color-elevated: var(--elevated);
 
-  /* Text */
-  --color-text-secondary: #888888;
-  --color-text-tertiary: #555555;
+  /* Text — theme-aware */
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary:  var(--text-tertiary);
 
-  /* Borders */
-  --color-border-emphasized: #333333;
+  /* Borders — theme-aware */
+  --color-border-emphasized: var(--border-emphasized);
 }
 
-/* Dark-first — this is the only theme */
-:root {
-  --background: #0a0a0a;
-  --foreground: #fafafa;
-  --card: #141414;
-  --card-foreground: #fafafa;
-  --popover: #141414;
-  --popover-foreground: #fafafa;
-  --primary: #a3e635;
-  --primary-foreground: #0a0a0a;
-  --secondary: #1a1a1a;
-  --secondary-foreground: #fafafa;
-  --muted: #111111;
-  --muted-foreground: #888888;
-  --accent: #1a1a1a;
-  --accent-foreground: #fafafa;
-  --destructive: #ef4444;
-  --border: #222222;
-  --input: #1a1a1a;
-  --ring: #a3e635;
-  --radius: 0.375rem;
-}
-
-/* Mirror for shadcn dark: variants */
+/* ============================================================ */
+/* Dark theme  (default / SSR fallback)                         */
+/* ============================================================ */
+:root,
 .dark {
   --background: #0a0a0a;
   --foreground: #fafafa;
@@ -95,8 +74,90 @@
   --border: #222222;
   --input: #1a1a1a;
   --ring: #a3e635;
+  --radius: 0.375rem;
+
+  --surface:          #111111;
+  --panel:            #141414;
+  --raised:           #1a1a1a;
+  --elevated:         #1e1e1e;
+  --text-secondary:   #888888;
+  --text-tertiary:    #555555;
+  --border-emphasized: #333333;
+  --hover-bg:         #1a1a1a;
+
+  --chat-user-bg:        #1a2a0a;
+  --chat-user-text:      #c8f57a;
+  --chat-user-border:    #2a3f10;
+  --chat-assistant-bg:   #141414;
+  --chat-assistant-border: #222222;
 }
 
+/* ============================================================ */
+/* Light theme  (warm cream — not sterile white)                */
+/* ============================================================ */
+.light {
+  --background: #F6F5F1;
+  --foreground: #1A1A18;
+  --card: #FFFFFF;
+  --card-foreground: #1A1A18;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1A18;
+  --primary: #4E7C00;
+  --primary-foreground: #FFFFFF;
+  --secondary: #ECEAE5;
+  --secondary-foreground: #1A1A18;
+  --muted: #F0EDE7;
+  --muted-foreground: #6B6B66;
+  --accent: #ECEAE5;
+  --accent-foreground: #1A1A18;
+  --destructive: #DC2626;
+  --border: #E0DDD6;
+  --input: #ECEAE5;
+  --ring: #4E7C00;
+  --radius: 0.375rem;
+
+  --surface:          #F0EDE7;
+  --panel:            #F6F5F1;
+  --raised:           #ECEAE5;
+  --elevated:         #E5E2DB;
+  --text-secondary:   #6B6B66;
+  --text-tertiary:    #9A9A94;
+  --border-emphasized: #CCC9C2;
+  --hover-bg:         #ECEAE5;
+
+  --chat-user-bg:        #F0F7E2;
+  --chat-user-text:      #3A6000;
+  --chat-user-border:    rgba(163, 230, 53, 0.35);
+  --chat-assistant-bg:   #FFFFFF;
+  --chat-assistant-border: #E0DDD6;
+}
+
+/* ============================================================ */
+/* Grain overlay — dark mode only                               */
+/* ============================================================ */
+.dark body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ============================================================ */
+/* Theme transition                                             */
+/* ============================================================ */
+html {
+  transition: background-color 220ms ease;
+}
+body {
+  transition: background-color 220ms ease, color 120ms ease;
+}
+
+/* ============================================================ */
+/* Base                                                         */
+/* ============================================================ */
 @layer base {
   * {
     @apply border-border;

@@ -44,7 +44,7 @@ export default function SectionCard({ projectId, section, projectColor }: Props)
       <div
         className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-raised transition-colors group"
         onClick={() => setExpanded((v) => !v)}
-        style={{ backgroundColor: expanded ? "#1a1a1a" : undefined }}
+        style={{ backgroundColor: expanded ? "var(--raised)" : undefined }}
       >
         <ChevronRight
           size={13}

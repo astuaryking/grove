@@ -4,16 +4,18 @@
 
 export interface ProjectColor {
   hex: string;
+  lightText: string; // darkened variant for text on light/cream backgrounds
   name: string;
-  bg: string;      // 10% opacity fill for cards/backgrounds
-  border: string;  // 30% opacity for borders
-  text: string;    // full color for text on dark backgrounds
+  bg: string;        // 10% opacity fill for cards/backgrounds
+  border: string;    // 30% opacity for borders
+  text: string;      // full color for text on dark backgrounds
 }
 
 // Fixed project color palette — designed for contrast on #0A0A0A
 export const PROJECT_COLORS: Record<string, ProjectColor> = {
   lime: {
     hex: "#A3E635",
+    lightText: "#4A7C00",
     name: "Lime",
     bg: "rgba(163, 230, 53, 0.10)",
     border: "rgba(163, 230, 53, 0.30)",
@@ -21,6 +23,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   amber: {
     hex: "#FBBF24",
+    lightText: "#92400E",
     name: "Amber",
     bg: "rgba(251, 191, 36, 0.10)",
     border: "rgba(251, 191, 36, 0.30)",
@@ -28,6 +31,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   orange: {
     hex: "#FB923C",
+    lightText: "#C2410C",
     name: "Orange",
     bg: "rgba(251, 146, 60, 0.10)",
     border: "rgba(251, 146, 60, 0.30)",
@@ -35,6 +39,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   teal: {
     hex: "#2DD4BF",
+    lightText: "#0F766E",
     name: "Teal",
     bg: "rgba(45, 212, 191, 0.10)",
     border: "rgba(45, 212, 191, 0.30)",
@@ -42,6 +47,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   purple: {
     hex: "#A78BFA",
+    lightText: "#6D28D9",
     name: "Purple",
     bg: "rgba(167, 139, 250, 0.10)",
     border: "rgba(167, 139, 250, 0.30)",
@@ -49,6 +55,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   pink: {
     hex: "#F472B6",
+    lightText: "#9D174D",
     name: "Pink",
     bg: "rgba(244, 114, 182, 0.10)",
     border: "rgba(244, 114, 182, 0.30)",
@@ -56,6 +63,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   blue: {
     hex: "#60A5FA",
+    lightText: "#1D4ED8",
     name: "Blue",
     bg: "rgba(96, 165, 250, 0.10)",
     border: "rgba(96, 165, 250, 0.30)",
@@ -63,6 +71,7 @@ export const PROJECT_COLORS: Record<string, ProjectColor> = {
   },
   red: {
     hex: "#F87171",
+    lightText: "#B91C1C",
     name: "Red",
     bg: "rgba(248, 113, 113, 0.10)",
     border: "rgba(248, 113, 113, 0.30)",

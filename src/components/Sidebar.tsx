@@ -4,6 +4,8 @@ import { useState } from "react";
 import { CalendarDays, Sun, ShoppingCart, Plus, Menu, X, Pencil, Check } from "lucide-react";
 import { useAppState, useAppDispatch, useCurrentUser, newId } from "@/lib/context";
 import { getProjectColor } from "@/lib/colors";
+import { useTheme } from "@/lib/theme";
+import ThemeToggle from "@/components/ThemeToggle";
 import type { ViewId } from "@/lib/types";
 
 interface Props {
@@ -15,6 +17,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
   const state    = useAppState();
   const dispatch = useAppDispatch();
   const me       = useCurrentUser();
+  const { theme } = useTheme();
 
   const [collapsed,      setCollapsed]      = useState(false);
   const [addingProject,  setAddingProject]  = useState(false);
@@ -65,11 +68,11 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
   function Content({ onClose }: { onClose: () => void }) {
     return (
       <>
-        {/* Header — logo + your identity */}
+        {/* Header */}
         <div className="flex items-center gap-2 px-3 py-3 border-b border-border flex-shrink-0">
           <span className="text-[13px] font-semibold text-foreground tracking-tight select-none flex-1">🌿 Grove</span>
 
-          {/* Your name — click to rename */}
+          {/* Your name */}
           {me && (
             editingName ? (
               <form onSubmit={(e) => { e.preventDefault(); commitName(); }} className="flex items-center gap-1">
@@ -98,7 +101,9 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
             )
           )}
 
-          <button onClick={onClose} className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-raised transition-colors ml-1">
+          <ThemeToggle />
+
+          <button onClick={onClose} className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-raised transition-colors">
             <X size={12} />
           </button>
         </div>
@@ -112,7 +117,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
 
         <div className="mx-3 my-1 border-t border-border flex-shrink-0" />
 
-        {/* Projects */}
+        {/* Projects label */}
         <div className="px-3 pt-1 pb-0.5 flex-shrink-0">
           <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">Projects</span>
         </div>
@@ -120,7 +125,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
         {/* Person filter chips */}
         {peopleWithProjects.length > 0 && (
           <div className="px-2 pb-1.5 flex flex-wrap gap-1 flex-shrink-0">
-            <FilterChip label="All" active={filterUserId === null} color="#888" onClick={() => setFilterUserId(null)} />
+            <FilterChip label="All" active={filterUserId === null} color="var(--muted-foreground)" onClick={() => setFilterUserId(null)} />
             {peopleWithProjects.map((u) => (
               <FilterChip
                 key={u.id}
@@ -133,22 +138,35 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
           </div>
         )}
 
+        {/* Project list */}
         <div className="px-2 flex flex-col gap-0.5 flex-1 overflow-y-auto">
           {visibleProjects.map((project) => {
             const active = isActive("project", project.id);
             const pc = getProjectColor(project.color);
+            const activeText = theme === "light" ? pc.lightText : pc.text;
             return (
-              <button key={project.id} onClick={() => navigate("project", project.id)}
+              <button
+                key={project.id}
+                onClick={() => navigate("project", project.id)}
                 className="group flex items-center gap-2 py-[5px] rounded text-left w-full transition-colors"
-                style={active ? { backgroundColor: pc.bg, borderLeft: `2px solid ${pc.hex}`, paddingLeft: "6px" } : { borderLeft: "2px solid transparent", paddingLeft: "6px" }}
-                onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "#1a1a1a"; }}
+                style={
+                  active
+                    ? { backgroundColor: pc.bg, borderLeft: `2px solid ${pc.hex}`, paddingLeft: "6px" }
+                    : { borderLeft: "2px solid transparent", paddingLeft: "6px" }
+                }
+                onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "var(--hover-bg)"; }}
                 onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLElement).style.backgroundColor = "transparent"; }}
               >
                 <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: pc.hex }} />
-                <span className="flex-1 text-[13px] truncate" style={{ color: active ? pc.text : "#FAFAFA" }}>
+                <span
+                  className="flex-1 text-[13px] truncate transition-colors"
+                  style={{ color: active ? activeText : "var(--foreground)" }}
+                >
                   {project.icon} {project.name}
                 </span>
-                <span className="text-[11px] font-mono text-muted-foreground tabular-nums pr-1">{project.sections.length}</span>
+                <span className="text-[11px] font-mono text-muted-foreground tabular-nums pr-1">
+                  {project.sections.length}
+                </span>
               </button>
             );
           })}
@@ -158,7 +176,10 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
         <div className="px-2 pb-4 mt-1 flex-shrink-0">
           {addingProject ? (
             <form onSubmit={handleAddProject} className="flex gap-1">
-              <input autoFocus value={newProjectName} onChange={(e) => setNewProjectName(e.target.value)}
+              <input
+                autoFocus
+                value={newProjectName}
+                onChange={(e) => setNewProjectName(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Escape") { setAddingProject(false); setNewProjectName(""); } }}
                 placeholder="Project name"
                 className="flex-1 text-[12px] bg-panel border border-border-emphasized rounded px-2 py-1 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-ring min-w-0"
@@ -166,7 +187,10 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
               <button type="submit" className="text-[11px] px-2 py-1 bg-primary text-primary-foreground rounded hover:opacity-90 font-medium">Add</button>
             </form>
           ) : (
-            <button onClick={() => setAddingProject(true)} className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 w-full">
+            <button
+              onClick={() => setAddingProject(true)}
+              className="flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground transition-colors px-2 py-1 w-full"
+            >
               <Plus size={12} /> Add project
             </button>
           )}
@@ -200,7 +224,12 @@ export default function Sidebar({ mobileOpen, onMobileClose }: Props) {
 
 function NavItem({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active: boolean; onClick: () => void }) {
   return (
-    <button onClick={onClick} className={`flex items-center gap-2 px-2 py-[5px] rounded text-[13px] w-full text-left transition-colors ${active ? "bg-raised text-foreground" : "text-muted-foreground hover:text-foreground hover:bg-raised"}`}>
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-2 py-[5px] rounded text-[13px] w-full text-left transition-colors ${
+        active ? "bg-raised text-foreground font-medium" : "text-muted-foreground hover:text-foreground hover:bg-raised"
+      }`}
+    >
       {icon}{label}
     </button>
   );
@@ -214,7 +243,7 @@ function FilterChip({ label, active, color, onClick }: { label: string; active: 
       style={
         active
           ? { backgroundColor: color + "33", color, border: `1px solid ${color}66` }
-          : { backgroundColor: "transparent", color: "#555", border: "1px solid #2a2a2a" }
+          : { backgroundColor: "transparent", color: "var(--muted-foreground)", border: "1px solid var(--border-emphasized)" }
       }
     >
       {label}
